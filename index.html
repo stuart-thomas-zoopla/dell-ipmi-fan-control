@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control Panel</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h2>Fan Control</h2>
+   <div class="container">
+        <div class="input-container">
+            <form>
+                <label for="numberInput">Enter a number from 1 to 120:</label>
+                <input type="number" id="numberInput" name="numberInput" min="1" max="120">
+                <input id="submit" type="submit" value="Submit">
+                <button id="autoBtn">Auto</button>
+                <button id="rebootBtn">Reboot</button>
+            </form>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
