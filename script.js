@@ -1,51 +1,48 @@
 const host = window.location.hostname;
-console.log("Local IP Address:", host); 
-const url = `http://${host}:3001/addJob`
+const url = `http://${host}:3001`;
 
 document.addEventListener("DOMContentLoaded", function() {
-    function sendPostRequest(body) {
-        return fetch(url, {
-            method: "POST",
-            body: body,
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
+    function fetchTemperatures() {
+        fetchHighestTemperature();
+        fetchAmbientTemperature();
+    }
+
+    function fetchHighestTemperature() {
+        fetch(`${url}/api/highestTemperature`)
+            .then(response => response.json())
+            .then(data => updateTemperature(data.highestTemperature, 'highestTemp'))
+            .catch(error => console.error('Error fetching highest temperature:', error));
+    }
+
+    function fetchAmbientTemperature() {
+        fetch(`${url}/api/ambientTemperature`)
+            .then(response => response.json())
+            .then(data => updateTemperature(data.ambientTemperature, 'ambientTemp'))
+            .catch(error => console.error('Error fetching ambient temperature:', error));
+    }
+
+    function updateTemperature(temperature, elementId) {
+        const temperatureElement = document.getElementById(elementId);
+        temperatureElement.textContent = `${temperature}  C`;
+
+        temperatureElement.classList.remove('ambient-temp', 'high-ambient-temp', 'cpu-temp', 'high-cpu-temp');
+        if (elementId === 'highestTemp') {
+            if (temperature >= 90) {
+                temperatureElement.classList.add('high-cpu-temp');
+            } else if (temperature >= 80) {
+                temperatureElement.classList.add('cpu-temp');
             }
-        })
-        .then(function(response) {
-            if (response.ok) {
-                console.log("POST request successful");
-            } else {
-                console.error("Error:", response.statusText);
+        } else if (elementId === 'ambientTemp') {
+            if (temperature >= 35) {
+                temperatureElement.classList.add('high-ambient-temp');
+            } else if (temperature >= 30) {
+                temperatureElement.classList.add('ambient-temp');
             }
-        })
-        .catch(function(error) {
-            console.error("Error:", error);
-        });
+        }
     }
 
-    function handleAutoButtonClick(event) {
-        event.preventDefault();
-        sendPostRequest("text=bash /var/www/html/fan/auto.sh");
-    }
+    fetchTemperatures();
 
-    function handleSubmitButtonClick(event) {
-        event.preventDefault();
-        var numberInput = document.getElementById("numberInput").value;
-        var body = "text=bash /var/www/html/fan/manual.sh " + numberInput;
-        sendPostRequest(body);
-    }
-
-    function handleRebootButtonClick(event) {
-        event.preventDefault();
-        sendPostRequest("text=reboot");
-    }
-
-    var autoButton = document.getElementById("autoBtn");
-    autoButton.addEventListener("click", handleAutoButtonClick);
-
-    var submitButton = document.getElementById("submit");
-    submitButton.addEventListener("click", handleSubmitButtonClick);
-
-    var autoButton = document.getElementById("rebootBtn");
-    autoButton.addEventListener("click", handleRebootButtonClick);
+    setInterval(fetchTemperatures, 15000);
 });
+                

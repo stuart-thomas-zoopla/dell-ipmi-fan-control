@@ -38,7 +38,7 @@ app.post('/addJob', async (req, res) => {
 
 // Function to execute a shell script and return the output
 function executeShellScript(scriptPath, callback) {
-    exec(`source ${scriptPath} && ${scriptPath}`, (error, stdout, stderr) => {
+    exec(`bash ${scriptPath}`, (error, stdout, stderr) => {
         if (error) {
             console.error(`Error executing shell script: ${error.message}`);
             return;
@@ -96,7 +96,11 @@ app.get('/api/highestTemperature', (req, res) => {
 app.get('/api/ambientTemperature', (req, res) => {
     executeShellScript('/var/www/html/fan/ambient_temp.sh', (output) => {
         const ambientTemp = parseInt(output);
-        res.json({ ambientTemperature: ambientTemp });
+        if (!isNaN(ambientTemp)) {
+            res.json({ ambientTemperature: ambientTemp });
+        } else {
+            res.status(500).json({ error: 'Failed to parse ambient temperature' });
+        }
     });
 });
 
