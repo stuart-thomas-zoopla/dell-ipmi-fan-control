@@ -51,7 +51,7 @@ function executeShellScript(scriptPath, callback) {
     });
 }
 
-// Function to execute the sensors command and extract the highest temperature value
+// Function to execute the sensors command and extract the cpu temperature value
 function getSensorsData(callback) {
     exec('sensors', (error, stdout, stderr) => {
         if (error) {
@@ -66,29 +66,29 @@ function getSensorsData(callback) {
     });
 }
 
-// Function to extract the highest temperature value from the sensors output
-function extractHighestTemperature(sensorsOutput) {
+// Function to extract the cpu temperature value from the sensors output
+function extractcpuTemperature(sensorsOutput) {
     const lines = sensorsOutput.split('\n');
-    let highestTemp = -273;
+    let cpuTemp = -273;
 
     lines.forEach(line => {
         const tempMatch = line.match(/\+([0-9.]+)/);
         if (tempMatch) {
             const temp = parseFloat(tempMatch[1]);
-            if (temp > highestTemp) {
-                highestTemp = temp;
+            if (temp > cpuTemp) {
+                cpuTemp = temp;
             }
         }
     });
 
-    return highestTemp;
+    return cpuTemp;
 }
 
-// Endpoint to retrieve the highest temperature value
-app.get('/api/highestTemperature', (req, res) => {
+// Endpoint to retrieve the cpu temperature value
+app.get('/api/cpuTemperature', (req, res) => {
     getSensorsData((output) => {
-        const highestTemp = extractHighestTemperature(output);
-        res.json({ highestTemperature: highestTemp });
+        const cpuTemp = extractcpuTemperature(output);
+        res.json({ cpuTemperature: cpuTemp });
     });
 });
 

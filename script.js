@@ -3,15 +3,15 @@ const url = `http://${host}:3001`;
 
 document.addEventListener("DOMContentLoaded", function() {
     function fetchTemperatures() {
-        fetchHighestTemperature();
+        fetchcpuTemperature();
         fetchAmbientTemperature();
     }
 
-    function fetchHighestTemperature() {
-        fetch(`${url}/api/highestTemperature`)
+    function fetchcpuTemperature() {
+        fetch(`${url}/api/cpuTemperature`)
             .then(response => response.json())
-            .then(data => updateTemperature(data.highestTemperature, 'highestTemp'))
-            .catch(error => console.error('Error fetching highest temperature:', error));
+            .then(data => updateTemperature(data.cpuTemperature, 'cpuTemp'))
+            .catch(error => console.error('Error fetching cpu temperature:', error));
     }
 
     function fetchAmbientTemperature() {
@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function() {
         temperatureElement.textContent = `${temperature}  C`;
 
         temperatureElement.classList.remove('ambient-temp', 'high-ambient-temp', 'cpu-temp', 'high-cpu-temp');
-        if (elementId === 'highestTemp') {
+        if (elementId === 'cpuTemp') {
             if (temperature >= 90) {
                 temperatureElement.classList.add('high-cpu-temp');
             } else if (temperature >= 80) {
