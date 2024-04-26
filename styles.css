@@ -1,12 +1,14 @@
+/* Global styles */
 body {
     font-family: Arial, sans-serif;
     background-color: #f8f9fa;
     margin: 0;
     padding: 0;
+    color: #333333;
 }
 
 .container {
-    max-width: 60%;
+    max-width: 80%;
     margin: 0 auto;
     padding: 20px;
     background-color: #ffffff;
@@ -17,7 +19,7 @@ body {
 h2 {
     font-size: 24px;
     margin-bottom: 20px;
-    color: #333333;
+    color: #1e2124; /* Darker gray color for headings */
     text-align: center;
 }
 
@@ -27,16 +29,20 @@ h2 {
     align-items: center;
 }
 
+.input-container label {
+    margin-bottom: 10px;
+}
+
 .input-container input[type="number"],
 .input-container input[type="submit"],
 .input-container button {
-    padding: 15px 30px;
-    font-size: 18px;
+    padding: 12px 24px;
+    font-size: 16px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    margin: 10px;
+    margin: 10px 0;
 }
 
 .input-container input[type="number"] {
@@ -45,28 +51,80 @@ h2 {
 }
 
 .input-container input[type="submit"] {
-    background-color: #007bff;
+    background-color: #007bff; 
     color: #ffffff;
 }
 
 .input-container input[type="submit"]:hover {
-    opacity: 0.8;
+    background-color: #0056b3; 
 }
 
 .input-container button#autoBtn {
     background-color: #28a745; 
-    color: #ffffff; 
+    color: #ffffff;
 }
 
 .input-container button#autoBtn:hover {
-    opacity: 0.8;
+    background-color: #218838; 
 }
 
 .input-container button#rebootBtn {
     background-color: #9c0000; 
-    color: #ffffff; 
+    color: #ffffff;
 }
 
 .input-container button#rebootBtn:hover {
-    opacity: 0.8;
+    background-color: #7d0000; 
+}
+
+
+.temperature-container {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.temperature-container h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+    color: #6c757d; 
+}
+
+.temperature-container div {
+    margin-bottom: 10px;
+}
+
+.temperature-container label {
+    font-size: 16px;
+    margin-right: 10px;
+}
+
+.temperature-container span {
+    font-size: 16px;
+    color: #28a745; 
+}
+
+.temperature-container span.cpu-temp {
+    font-family: Impact, Arial, sans-serif; 
+    color: #ffc107; 
+    font-weight: bold; 
+}
+
+.temperature-container span.ambient-temp {
+    font-family: Impact, Arial, sans-serif; 
+    color: #ffc107; 
+    font-weight: bold; 
+}
+
+.temperature-container span.high-cpu-temp {
+    font-family: Impact, Arial, sans-serif;
+    color: #ff0000; 
+    font-size: 24px; 
+    font-weight: bold; 
+}
+
+.temperature-container span.high-ambient-temp {
+    font-family: Impact, Arial, sans-serif; 
+    color: #ff0000; 
+    font-size: 24px; 
+    font-weight: bold; 
 }
