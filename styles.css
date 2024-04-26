@@ -70,3 +70,28 @@ h2 {
 .input-container button#rebootBtn:hover {
     opacity: 0.8;
 }
+
+.temperature-container {
+    margin-top: 30px;
+}
+
+.temperature-container h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+    color: #333333;
+}
+
+.temperature-container div {
+    margin-bottom: 10px;
+}
+
+.temperature-container label {
+    font-size: 18px;
+    color: #333333;
+    margin-right: 10px;
+}
+
+.temperature-container span {
+    font-size: 18px;
+    color: #007bff;
+}
