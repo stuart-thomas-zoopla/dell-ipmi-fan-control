@@ -31,7 +31,7 @@ redis-server --daemonize yes
 apt-get update && apt-get install -y ipmitool
 git clone https://github.com/stuart-thomas-zoopla/dell-ipmi-fan-control /var/www/html/fan
 cd /var/www/html/fan
-chmod +x /var/www/html/fan/low.sh /var/www/html/fan/high.sh /var/www/html/fan/auto.sh /var/www/html/fan/ambient_temp.sh
+chmod +x /var/www/html/fan/low.sh /var/www/html/fan/high.sh /var/www/html/fan/auto.sh /var/www/html/fan/ambient_temp.sh /var/www/html/fan/rpm.sh
 update_env "$idrac_ip" "$idrac_user" "$idrac_pwd"
 npm i
 host=ifconfig | sed -n 's/.*inet ([0-9.] ).*/1/p' | head -n1

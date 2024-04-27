@@ -19,7 +19,7 @@
         </div>
     </div>
     <div class="temperature-container">
-        <h3>Temperature Readings</h3>
+        <h3>Sensor Readings</h3>
         <div id="cpu-temp-container">
             <label for="cpuTemp">CPU Temperature:</label>
             <span id="cpuTemp">Loading...</span>
@@ -28,6 +28,13 @@
             <label for="ambientTemp">Ambient Temperature:</label>
             <span id="ambientTemp">Loading...</span>
         </div>
+        <div id="fanRPM-container">
+            <label for="fanRPM">Fan RPM:</label>
+            <span id="fanRPM">Loading...</span>
+        </div>
+        <p>Readings automatically refresh every 15 seconds.
+            <br>Ambient Temperature and Fan RPM rely on calls to IPMI and are slow to refresh.
+            <br>CPU temp is based on highest temp reported by lm-sensors.</p>
     </div>
     <script src="script.js">
     </script>

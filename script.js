@@ -2,9 +2,10 @@ const host = window.location.hostname;
 const url = `http://${host}:3001`;
 
 document.addEventListener("DOMContentLoaded", function() {
-    function fetchTemperatures() {
+    function fetchReadings() {
         fetchcpuTemperature();
         fetchAmbientTemperature();
+        fetchFanRPM();
     }
 
     function fetchcpuTemperature() {
@@ -41,12 +42,24 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
-    fetchTemperatures();
+    function fetchFanRPM() {
+        fetch(`${url}/api/fanRPM`)
+            .then(response => response.json())
+            .then(data => updateFanRPM(data.fanRPM))
+            .catch(error => console.error('Error fetching fan RPM:', error));
+    }
+    
+    function updateFanRPM(rpm) {
+        const fanRPMElem = document.getElementById('fanRPM');
+        fanRPMElem.textContent = rpm ? `${rpm} RPM` : 'N/A';
+    }
+    
+    fetchReadings();
 
-    setInterval(fetchTemperatures, 15000);
+    setInterval(fetchReadings, 15000);
 
     function sendPostRequest(body) {
-        return fetch(`${url}/addJob`, {
+        return fetch(`${url}/api/addJob`, {
             method: "POST",
             body: body,
             headers: {
