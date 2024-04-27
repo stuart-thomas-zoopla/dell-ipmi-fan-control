@@ -28,14 +28,6 @@ queue.process(async (job) => {
     });
 });
 
-app.post('/addJob', async (req, res) => {
-    const text = req.body.text || 'bash auto.sh';
-    await queue.add({
-        text
-    });
-    res.send('Job added to queue!');
-});
-
 // Function to execute a shell script and return the output
 function executeShellScript(scriptPath, callback) {
     exec(`bash ${scriptPath}`, (error, stdout, stderr) => {
@@ -84,6 +76,15 @@ function extractcpuTemperature(sensorsOutput) {
     return cpuTemp;
 }
 
+// Endpoint to add execution of a script to a queue
+app.post('/api/addJob', async (req, res) => {
+    const text = req.body.text || 'bash auto.sh';
+    await queue.add({
+        text
+    });
+    res.send('Job added to queue!');
+});
+
 // Endpoint to retrieve the cpu temperature value
 app.get('/api/cpuTemperature', (req, res) => {
     getSensorsData((output) => {
@@ -100,6 +101,18 @@ app.get('/api/ambientTemperature', (req, res) => {
             res.json({ ambientTemperature: ambientTemp });
         } else {
             res.status(500).json({ error: 'Failed to parse ambient temperature' });
+        }
+    });
+});
+
+// Endpoint to retrieve the fan RPM
+app.get('/api/fanRPM', (req, res) => {
+    executeShellScript('/var/www/html/fan/rpm.sh', (output) => {
+        const fanRPM = output.trim();
+        if (fanRPM) {
+            res.json({ fanRPM });
+        } else {
+            res.status(500).json({ error: 'Failed to retrieve fan RPM' });
         }
     });
 });
