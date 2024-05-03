@@ -13,3 +13,6 @@ wget https://raw.githubusercontent.com/stuart-thomas-zoopla/dell-ipmi-fan-contro
 ```
 
 Then answer the prompts for IP address and login credentials for your idrac module and go make a cup of tea. When you come back it should have restarted the container/vm and the web interface will be available at <containerip>:3001 eg 192.168.0.1:3001
+
+## Known Compatiability
+This configuration has been tested on the latest idrac6 (2.92 at time of writing) on both Dell R610 and Dell R710 servers.
