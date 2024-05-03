@@ -16,3 +16,7 @@ Then answer the prompts for IP address and login credentials for your idrac modu
 
 ## Known Compatiability
 This configuration has been tested on the latest idrac6 (2.92 at time of writing) on both Dell R610 and Dell R710 servers.
+
+IMPORTANT NOTE: You need to test the various automap values (From 1 to 120) and ensure they work with your system. R610 specifically are likely to need different to default values. See R610 *.sh files
+
+Some of the changes made to the R610 scripts may be worth porting to the R710 scripts too, but I haven't had opprtunity to look at that yet.
