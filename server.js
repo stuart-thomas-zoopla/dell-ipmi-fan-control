@@ -61,20 +61,24 @@ function getSensorsData(callback) {
 // Function to extract the cpu temperature value from the sensors output
 function extractcpuTemperature(sensorsOutput) {
     const lines = sensorsOutput.split('\n');
-    let cpuTemp = -273;
+    let maxTemp = -273;
 
     lines.forEach(line => {
-        const tempMatch = line.match(/\+([0-9.]+)/);
+        // Remove everything after '('
+        const cleanedLine = line.split('(')[0];
+        
+        const tempMatch = cleanedLine.match(/\+(\d+\.\d+)\s*C\b/);
         if (tempMatch) {
             const temp = parseFloat(tempMatch[1]);
-            if (temp > cpuTemp) {
-                cpuTemp = temp;
+            if (temp > maxTemp) {
+                maxTemp = temp;
             }
         }
     });
 
-    return cpuTemp;
+    return maxTemp;
 }
+
 
 // Endpoint to add execution of a script to a queue
 app.post('/api/addJob', async (req, res) => {
