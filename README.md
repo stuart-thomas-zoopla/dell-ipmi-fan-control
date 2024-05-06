@@ -1,10 +1,12 @@
 # Dell-IPMI/idrac6-fan-control
-These scripts provide an override for the fan control on Dell PowerEdge servers that have IPMI access.  It was developed against a R710 with iDRAC 6 and is designed to be run in contrainer or VM. I personally run Proxmox and so run it inside an LXC container.
+These scripts provide an override for the fan control on Dell PowerEdge servers that have IPMI access.  It was developed against a R710 and R610 with iDRAC 6 and is designed to be run in a container or VM. I personally run Proxmox and so run it inside an LXC container.
+
+Note: Values for R720 are a work in progress.
 
 ## What does it do?
-Once installed, by default a script called auto.sh will run in the background. This checks CPU temperature and then picks between two other scripts, one for low demand and one for high demand (or low and high temp).  These scripts then check the ambient temperature sensor in the server and set a fan speed based on that value.  High demand will set faster fan speeds for the same ambient temperature than the low demand script does, as the CPU's are hotter.
+Once installed, by default a script called auto.sh will run in the background. This checks CPU temperature and set a fan speed based on that value.
 
-Also included is a simple web interface that allows you to override the auto settings and set a manual value for the fan speed. Setting this to 1 sets the fans to around 1000rpm. Setting it to 120 sets the fans just over 10000rpm. Anything in between is inbetween. Within the Web interface you can also set it back to Auto, or if things have gone squiffy, reboot the container/vm you have this running in.
+Also included is a simple web interface that allows you to override the auto settings and set a manual value for the fan speed. The effect of the values in this setting vary slightly based on the system you are running against. Setting this to 1 on a R710 sets the fans to around 1000rpm, where as on an R610 you should not set below 20 otherwise you get low RPM warnings and the fans can stop altogether. On the other hand 120 seems to be a safe universal maximum speed, with the actual fan speed being between 10,000 (R710) and 14,000 rpm (R610), again depending on system. Anything in between is inbetween. Within the Web interface you can also set it back to Auto, or if things have gone squiffy, reboot the container/vm you have this running in.
 
 ## Installation
 From a Linux CLI run 
@@ -12,11 +14,26 @@ From a Linux CLI run
 wget https://raw.githubusercontent.com/stuart-thomas-zoopla/dell-ipmi-fan-control/main/install.sh && bash install.sh
 ```
 
-Then answer the prompts for IP address and login credentials for your idrac module and go make a cup of tea. When you come back it should have restarted the container/vm and the web interface will be available at <containerip>:3001 eg 192.168.0.1:3001
+You will recieve a couple of prompts to provide values.
+
+#### System Type
+Currently supported are R610 and R710. There are some configurations in place for R720 but these are experimental and not recommended for use. Leaving the system type blank will allow you to provide your own values instead of my defaults.
+
+#### Fan speed and Temperature values
+If you don't enter a recognised system type, or leave it blank, you will be prompted to provide values for:
+
+Minimum RPM demand value: This is normally between 1 and 20, depending on the system.
+Upper RPM demand value: This can normally be safely set to 120.
+Minimum normal CPU temperature: This is the CPU temperature at which your fans will spin at the Minimum RPM demand value.
+Maximum CPU temperature: This is the CPU temperature at which your fans will spin at max RPM.
+Sensor name for fan RPM readings: This is used to get the RPM reading. Leaving it blank will use a value known to work on an R710.
+
+#### iDRAC credentials
+You will then be asked to provide your iDRAC credentials, includind the IP address, username and password for your iDRAC module.
+
+After that the install will run and prompt you to restart.Once the container/vm has restarted the web interface will be available at `containerip`:3001 eg 192.168.0.1:3001
 
 ## Known Compatiability
 This configuration has been tested on the latest idrac6 (2.92 at time of writing) on both Dell R610 and Dell R710 servers.
 
-IMPORTANT NOTE: You need to test the various automap values (From 1 to 120) and ensure they work with your system. R610 specifically are likely to need different to default values. See R610 *.sh files
-
-Some of the changes made to the R610 scripts may be worth porting to the R710 scripts too, but I haven't had opprtunity to look at that yet.
+# Use at your own risk. I will take no responsibility for you damaging your hardware by using this script.
