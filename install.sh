@@ -1,8 +1,4 @@
 #!/bin/bash
-predefined_values_R610="lowerrpm=20, upperrpm=120, mintemp=30, hightemp=85"
-predefined_values_R710="lowerrpm=1, upperrpm=120, mintemp=40, hightemp=85"
-predefined_values_R720="lowerrpm=2, upperrpm=120, mintemp=40, hightemp=80" #these values are untested
-
 prompt_system_type() {
     read -p "Please enter your system type, e.g., R710 (Leaving blank will allow you to provide your own min/max RPM and temperature range figures): " system_type
     system_type=$(echo "$system_type" | tr '[:upper:]' '[:lower:]') 
@@ -13,7 +9,9 @@ prompt_variable_values() {
     read -p "Please enter the minimum RPM demand value (normally between 1 and 20): " lowerrpm
     read -p "Please enter the upper RPM demand value (normally 120): " upperrpm
     read -p "Please enter the minimum normal CPU temperature (normally between 30 and 40): " mintemp
-    read -p "Please enter the maximum CPU temperature (this si the temperature your want your fans at max RPM): " hightemp
+    read -p "Please enter the maximum CPU temperature (this is the temperature your want your fans at max RPM): " hightemp
+    read -p "Please enter the sensor name for the fan you want to display RPM readings for (leaving this blank will use a default value known to work for R710):  " fanname
+    fan_name="${fan_name:-'FAN 3 RPM'}"  # Assign default value if fan_name is blank
     echo ""
 }
 
@@ -25,6 +23,15 @@ update_env() {
     local upperrpm=$5
     local mintemp=$6
     local hightemp=$7
+    local fanname=$8
+    echo "IDRAC_IP=$idrac_ip" > /dev/null
+    echo "IDRAC_USER=$idrac_user" > /dev/null
+    echo "IDRAC_PWD=$idrac_pwd" > /dev/null
+    echo "LOWERRPM=$lowerrpm" > /dev/null
+    echo "UPPERRPM=$upperrpm" > /dev/null
+    echo "MINTEMP=$mintemp" > /dev/null
+    echo "HIGHTEMP=$hightemp" > /dev/null
+    echo "FAN_NAME=$fanname" > /dev/null
     cat <<EOF >.env
 IDRAC_IP=$idrac_ip
 IDRAC_USER=$idrac_user
@@ -33,6 +40,7 @@ LOWERRPM=$lowerrpm
 UPPERRPM=$upperrpm
 MINTEMP=$mintemp
 HIGHTEMP=$hightemp
+FAN_NAME=$fanname
 EOF
     echo "Environment file (.env) updated."
 }
@@ -82,13 +90,26 @@ main() {
                 # Use predefined values for the entered system type
                 case $system_type in
                     r610)
-                        echo "$predefined_values_R610"
+                        lowerrpm=20
+                        upperrpm=120
+                        mintemp=30
+                        hightemp=85
+                        fanname="'FAN MOD 3A RPM'"
                         ;;
                     r710)
-                        echo "$predefined_values_R710"
+                        lowerrpm=1
+                        upperrpm=120
+                        mintemp=40
+                        hightemp=85
+                        fanname="'FAN 3 RPM'"
+
                         ;;
                     r720)
-                        echo "$predefined_values_R720"
+                        lowerrpm=2
+                        upperrpm=120
+                        mintemp=40
+                        hightemp=80
+                        fanname="'FAN 3 RPM'"
                         ;;
                 esac
                 ;;
@@ -104,9 +125,9 @@ main() {
         read -s -p "Enter IDRAC password: " idrac_pwd
         echo ""
 
-        update_env "$idrac_ip" "$idrac_user" "$idrac_pwd" "$lowerrpm" "$upperrpm" "$mintemp" "$hightemp"
         install_packages
         setup_repository
+        update_env "$idrac_ip" "$idrac_user" "$idrac_pwd" "$lowerrpm" "$upperrpm" "$mintemp" "$hightemp" "$fanname"
         waitToReboot
     done
 }
