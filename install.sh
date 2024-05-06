@@ -1,8 +1,11 @@
 #!/bin/bash
+predefined_values_R610="lowerrpm=20, upperrpm=120, mintemp=30, hightemp=85"
+predefined_values_R710="lowerrpm=1, upperrpm=120, mintemp=40, hightemp=85"
+predefined_values_R720="lowerrpm=2, upperrpm=120, mintemp=40, hightemp=80" #these values are untested
 
 prompt_system_type() {
     read -p "Please enter your system type, e.g., R710 (Leaving blank will allow you to provide your own min/max RPM and temperature range figures): " system_type
-    system_type=$(echo "$system_type" | tr '[:upper:]' '[:lower:]')  # Convert input to lowercase
+    system_type=$(echo "$system_type" | tr '[:upper:]' '[:lower:]') 
     echo ""
 }
 
