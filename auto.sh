@@ -106,30 +106,32 @@ while true; do
     echo "CPU Temperature: $cpu_temp°C"
     echo "Automap: $autoMap "
 
-    if [[ "$autoMap" -le 22 ]]; then
-    hex=$(printf '%x' "23")
-    eval $start "raw $setSpeed"'0'"$hex"
-    elif [[ "$autoMap" -gt 25 && "$autoMap" -le 32 ]]; then
-    hex=$(printf '%x' "32")   
-    eval $start "raw $setSpeed$hex"
-    elif [[ "$autoMap" -gt 41 && "$autoMap" -le 50 ]]; then
-    hex=$(printf '%x' "50")   
-    eval $start "raw $setSpeed$hex"
-    elif [[ "$autoMap" -gt 59 && "$autoMap" -le 65 ]]; then
-    hex=$(printf '%x' "65")   
-    eval $start "raw $setSpeed$hex"
-    elif [[ "$autoMap" -gt 69 && "$autoMap" -le 75 ]]; then
-    hex=$(printf '%x' "65")   
-    eval $start "raw $setSpeed$hex"
-    elif [[ "$autoMap" -gt 89 && "$autoMap" -le 100 ]]; then
-    hex=$(printf '%x' "100")   
-    eval $start "raw $setSpeed$hex"
-    elif [[ "$autoMap" -gt 109 ]]; then
-    hex=$(printf '%x' "120")   
-    eval $start "raw $setSpeed$hex"
+    retry_count=0
+    max_retries=10
+
+    while [ $retry_count -lt $max_retries ]; do
+        ((retry_count++))
+
+        hex=$(printf '%x' "$autoMap")
+        
+        if [[ "$autoMap" -le 7 ]]; then
+        command="raw $setSpeed"'0'"$hex"
     else
-    hex=$(printf '%x' "$autoMap")   
-    eval $start "raw $setSpeed$hex"
+        command="raw $setSpeed$hex"
+    fi
+        output=$(eval "$start $command" 2>&1)
+
+        if [[ $output == *"Given data"*"is invalid."* ]]; then
+            ((autoMap++))
+            echo "Retrying with incremented autoMap value: $autoMap"
+        else
+            echo "Command executed successfully."
+            break
+        fi
+    done
+
+    if [ $retry_count -eq $max_retries ]; then
+        echo "Maximum retry attempts reached. Exiting."
     fi
 
     sleep 15
