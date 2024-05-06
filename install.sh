@@ -90,7 +90,7 @@ main() {
                 # Use predefined values for the entered system type
                 case $system_type in
                     r610)
-                        lowerrpm=20
+                        lowerrpm=21
                         upperrpm=120
                         mintemp=30
                         hightemp=85
