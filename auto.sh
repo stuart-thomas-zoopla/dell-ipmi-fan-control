@@ -54,9 +54,9 @@ calculateDemandValue() {
     cpu_temp="$1"
 
     if (( $(echo "$cpu_temp < $minTemp" | bc -l) )); then
-        autoMap=$lowerRpmLimit
+        automap=$lowerRpmLimit
     elif (( $(echo "$cpu_temp > $highTemp" | bc -l) )); then
-        autoMap=$upperRpmLimit
+        automap=$upperRpmLimit
         else
         # Convert temperatures to integers for arithmetic operations
         cpu_temp_int=$(printf "%.0f" "$cpu_temp")
