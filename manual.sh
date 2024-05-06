@@ -10,8 +10,6 @@ if [ $# -eq 0 ]; then
     exit 1
 fi
 
-pkill -fe low.sh
-pkill -fe high.sh
 pkill -fe auto.sh
 
 autoMap="$1"
@@ -20,13 +18,30 @@ start="ipmitool -I lanplus -H $IDRAC_IP -U $IDRAC_USER -P $IDRAC_PWD"
 
 eval $start "raw 0x30 0x30 0x01 0x00"
 
-hex=$(printf '%x' "$autoMap")
+retry_count=0
+max_retries=10
 
-if [[ "$autoMap" -le 7 ]]; then
-   eval $start "raw $setSpeed"'0'"$hex"
-elif [[ "$autoMap" -gt 7 && "$autoMap" -le 15 ]]; then
-   hex=$(printf '%x' "16")   
-   eval $start "raw $setSpeed$hex"
-else
-   eval $start "raw $setSpeed$hex"
+while [ $retry_count -lt $max_retries ]; do
+    ((retry_count++))
+
+    hex=$(printf '%x' "$autoMap")
+    
+    if [[ "$autoMap" -le 7 ]]; then
+      command="raw $setSpeed"'0'"$hex"
+   else
+      command="raw $setSpeed$hex"
+   fi
+    output=$(eval "$start $command" 2>&1)
+
+    if [[ $output == *"Given data"*"is invalid."* ]]; then
+        ((autoMap++))
+        echo "Retrying with incremented autoMap value: $autoMap"
+    else
+        echo "Command executed successfully."
+        break
+    fi
+done
+
+if [ $retry_count -eq $max_retries ]; then
+    echo "Maximum retry attempts reached. Exiting."
 fi
