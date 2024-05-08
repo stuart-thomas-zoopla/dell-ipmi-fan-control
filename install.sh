@@ -41,6 +41,7 @@ UPPERRPM=$upperrpm
 MINTEMP=$mintemp
 HIGHTEMP=$hightemp
 FAN_NAME=$fanname
+HYSTERESIS=2
 EOF
     echo "Environment file (.env) updated."
 }

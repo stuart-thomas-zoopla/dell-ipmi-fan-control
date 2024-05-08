@@ -8,6 +8,7 @@ echo "LOWERRPM: $LOWERRPM" > /dev/null
 echo "UPPERRPM: $UPPERRPM" > /dev/null
 echo "MINTEMP: $MINTEMP" > /dev/null
 echo "HIGHTEMP: $HIGHTEMP" > /dev/null
+echo "HYSTERESIS: $HYSTERESIS" >/dev/null
 
 # Set lower and upper RPM limits
 lowerRpmLimit=$LOWERRPM
@@ -16,6 +17,8 @@ upperRpmLimit=$UPPERRPM
 # Set minimum and high temperature thresholds
 minTemp=$MINTEMP
 highTemp=$HIGHTEMP
+hysteresis=$HYSTERESIS
+previous_cpu_temp=-273
 
 setManual="0x30 0x30 0x01 0x00"
 setAuto="0x30 0x30 0x01 0x01"
@@ -59,11 +62,10 @@ calculateDemandValue() {
         automap=$upperRpmLimit
         else
         # Convert temperatures to integers for arithmetic operations
-        cpu_temp_int=$(printf "%.0f" "$cpu_temp")
         minTemp_int=$(printf "%.0f" "$minTemp")
 
         # Calculate the temperature difference
-        temp_diff=$((cpu_temp_int - minTemp_int))
+        temp_diff=$((cpu_temp - minTemp_int))
 
         # Linearly interpolate fan speed between lower and upper RPM limits based on temperature
         temp_range=$((highTemp - minTemp))
@@ -97,41 +99,49 @@ round_to_nearest() {
 
 # Main script
 while true; do
-
     sensor_data=$(sensors)
-    
     cpu_temp=$(extractcpuTemperature "$sensor_data")
-    autoMap=$(calculateDemandValue "$cpu_temp")
+    cpu_temp_int=$(printf "%.0f" "$cpu_temp")
+    autoMap=$(calculateDemandValue "$cpu_temp_int")
 
     echo "CPU Temperature: $cpu_temp°C"
     echo "Automap: $autoMap "
 
-    retry_count=0
-    max_retries=10
+    # Check if the temperature difference is significant enough to adjust fan speed
+    temp_diff=$((cpu_temp_int - previous_cpu_temp))
+    echo "Temp diff: $temp_diff"
+    if ((temp_diff >= hysteresis || temp_diff <= 0 - hysteresis)); then
+        retry_count=0
+        max_retries=10
 
-    while [ $retry_count -lt $max_retries ]; do
-        ((retry_count++))
-
-        hex=$(printf '%x' "$autoMap")
+        while [ $retry_count -lt $max_retries ]; do
+            ((retry_count++))
+            hex=$(printf '%x' "$autoMap")
         
-        if [[ "$autoMap" -le 7 ]]; then
-        command="raw $setSpeed"'0'"$hex"
-    else
-        command="raw $setSpeed$hex"
-    fi
-        output=$(eval "$start $command" 2>&1)
+            if [[ "$autoMap" -le 7 ]]; then
+                command="raw $setSpeed"'0'"$hex"
+            else
+                command="raw $setSpeed$hex"
+            fi
+            
+            output=$(eval "$start $command" 2>&1)
 
-        if [[ $output == *"Given data"*"is invalid."* ]]; then
-            ((autoMap++))
-            echo "Retrying with incremented autoMap value: $autoMap"
-        else
-            echo "Command executed successfully."
-            break
+            if [[ $output == *"Given data"*"is invalid."* ]]; then
+                ((autoMap++))
+                echo "Retrying with incremented autoMap value: $autoMap"
+            else
+                echo "Command executed successfully."
+                break
+            fi
+        done
+
+        if [ $retry_count -eq $max_retries ]; then
+            echo "Maximum retry attempts reached. Exiting."
         fi
-    done
+        previous_cpu_temp=$cpu_temp_int
 
-    if [ $retry_count -eq $max_retries ]; then
-        echo "Maximum retry attempts reached. Exiting."
+    else
+        echo "Temperature difference less than hysteresis value. Skipping fan control."
     fi
 
     sleep 15
