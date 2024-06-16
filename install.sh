@@ -106,11 +106,11 @@ main() {
 
                         ;;
                     r720)
-                        lowerrpm=2
+                        lowerrpm=1
                         upperrpm=120
                         mintemp=40
-                        hightemp=80
-                        fanname="'FAN 3 RPM'"
+                        hightemp=85
+                        fanname="'FAN3'"
                         ;;
                 esac
                 ;;
