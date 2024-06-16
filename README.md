@@ -1,7 +1,5 @@
 # Dell-IPMI/idrac6-fan-control
-These scripts provide an override for the fan control on Dell PowerEdge servers that have IPMI access.  It was developed against a R710 and R610 with iDRAC 6 and is designed to be run in a container or VM. I personally run Proxmox and so run it inside an LXC container.
-
-Note: Values for R720 are a work in progress.
+These scripts provide an override for the fan control on Dell PowerEdge servers that have IPMI access.  It has been developed and tested against an R710 and an R610 with iDRAC 6, and an R720 with idrac7. It is designed to be run in a container or VM. I personally run Proxmox and so run it inside an LXC container.
 
 ## What does it do?
 Once installed, by default a script called auto.sh will run in the background. This checks CPU temperature and set a fan speed based on that value.
@@ -17,7 +15,7 @@ wget https://raw.githubusercontent.com/stuart-thomas-zoopla/dell-ipmi-fan-contro
 You will recieve a couple of prompts to provide values.
 
 #### System Type
-Currently supported are R610 and R710. There are some configurations in place for R720 but these are experimental and not recommended for use. Leaving the system type blank will allow you to provide your own values instead of my defaults.
+Currently supported are R610, R710, and R720. Othe systems, including non-Dell systems that support IPMI will likely work. To test with those system leave the system type blank and you will prompted you to provide your own values instead of using the defaults.
 
 #### Fan speed and Temperature values
 If you don't enter a recognised system type, or leave it blank, you will be prompted to provide values for:
@@ -34,6 +32,6 @@ You will then be asked to provide your iDRAC credentials, includind the IP addre
 After that the install will run and prompt you to restart.Once the container/vm has restarted the web interface will be available at `containerip`:3001 eg 192.168.0.1:3001
 
 ## Known Compatiability
-This configuration has been tested on the latest idrac6 (2.92 at time of writing) on both Dell R610 and Dell R710 servers.
+This configuration has been tested on the latest idrac6 (2.92 at time of writing) on both Dell R610 and Dell R710 servers, as well as idrac7 on a Dell R720.
 
 # Use at your own risk. I will take no responsibility for you damaging your hardware by using this script.
