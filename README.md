@@ -1,4 +1,4 @@
-# Dell-IPMI/idrac6-fan-control
+# Dell-IPMI/idrac-fan-control
 These scripts provide an override for the fan control on Dell PowerEdge servers that have IPMI access.  It has been developed and tested against an R710 and an R610 with iDRAC 6, and an R720 with idrac7. It is designed to be run in a container or VM. I personally run Proxmox and so run it inside an LXC container.
 
 ## What does it do?
