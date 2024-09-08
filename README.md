@@ -6,6 +6,8 @@ Once installed, by default a script called auto.sh will run in the background. T
 
 Also included is a simple web interface that allows you to override the auto settings and set a manual value for the fan speed. The effect of the values in this setting vary slightly based on the system you are running against. Setting this to 1 on a R710 sets the fans to around 1000rpm, where as on an R610 you should not set below 20 otherwise you get low RPM warnings and the fans can stop altogether. On the other hand 120 seems to be a safe universal maximum speed, with the actual fan speed being between 10,000 (R710) and 14,000 rpm (R610), again depending on system. Anything in between is inbetween. Within the Web interface you can also set it back to Auto, or if things have gone squiffy, reboot the container/vm you have this running in.
 
+![fan](https://github.com/user-attachments/assets/469ecc93-a58e-443e-9ba8-53430d798e6c)
+
 ## Installation
 From a Linux CLI run 
 ```
