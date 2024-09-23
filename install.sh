@@ -51,6 +51,7 @@ install_packages() {
     apt install -y git nodejs npm net-tools lm-sensors redis-server bc
     redis-server --daemonize yes
     apt-get update && apt-get install -y ipmitool
+    chmod +x /usr/bin/ipmitool 
 }
 
 setup_repository() {

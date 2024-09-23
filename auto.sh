@@ -27,8 +27,8 @@ setSpeed="0x30 0x30 0x02 0xff "
 start="ipmitool -I lanplus -H $IDRAC_IP -U $IDRAC_USER -P $IDRAC_PWD"
 
 do_Setup() {
-   chmod +x /usr/bin/ipmitool 
    eval $start "raw 0x30 0x30 0x01 0x00"
+   pkill -fe auto.sh # prevent two instances of the script running
 }
 
 # Function to extract CPU temperature from sensors output
